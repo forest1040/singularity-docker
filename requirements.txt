@@ -1,0 +1,13 @@
+quri-parts==0.24.0
+pyscf==2.10.0
+quri-parts[pyscf]==0.24.0
+quri-parts[openfermion]==0.24.0
+quri-parts[qulacs]==0.24.0
+pytest==8.4.2
+qiskit==2.2.1
+qiskit-ibm-runtime==0.42.0
+matplotlib-inline==0.1.7
+# quri_vm
+# pyblock3
+prefect==3.4.22 
+git+https://github.com/QunaSys/quri-parts-qsci.git

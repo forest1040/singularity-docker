@@ -1,0 +1,31 @@
+# --------------------------------------------------------------
+# Dockerfile.apptainer  ― Apptainer が入ったビルド環境
+# --------------------------------------------------------------
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 必要なパッケージ（Apptainer のビルドに必須）
+RUN apt-get update && apt-get install -y \
+    build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup uidmap \
+    fuse3 libfuse3-dev git wget ca-certificates sudo && \
+    rm -rf /var/lib/apt/lists/*
+
+# Go（Apptainer は Go でビルド）
+ENV GO_VERSION=1.25.4
+RUN wget https://go.dev/dl/go${GO_VERSION}.linux-arm64.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-arm64.tar.gz && \
+    rm go${GO_VERSION}.linux-arm64.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+# Apptainer のインストール（最新版を取得）
+ARG APPTAINER_VER=1.4.4
+RUN wget https://github.com/apptainer/apptainer/releases/download/v${APPTAINER_VER}/apptainer-${APPTAINER_VER}.tar.gz && \
+    tar xzf apptainer-${APPTAINER_VER}.tar.gz && \
+    cd apptainer-${APPTAINER_VER} && ./mconfig --without-suid && make -C builddir && sudo make -C builddir install && \
+    cd .. && rm -rf apptainer-${APPTAINER_VER}*
+
+#RUN ln -s /usr/local/bin/apptainer /usr/local/bin/singularity
+
+# デフォルトは bash
+CMD ["/bin/bash"]
